@@ -25,13 +25,14 @@
 #define BUTTON1 (~PIND & 0x01) //right
 #define BUTTON2 (~PIND & 0x02) //left
 #define BUTTON3 (~PIND & 0x04)
-#define DEFAULT_SPEED 60
+#define DEFAULT_SPEED 20
 // #define MOVES_PER_TICK 3
 
 // #define BUTTON4 (~PINA & 0x08) //down (p2)
 // #define BUTTON5 (~PINA & 0x10) //reset?
 
-uint8_t highScore;
+uint8_t highScore, hsOnes, hsTens;
+unsigned char onesPlace, tensPlace;
 unsigned char myPlayer; //0x00, 0x01, 0x02, 0x03
 unsigned char bestPlayer;
 unsigned char playerX = 0;
@@ -163,10 +164,10 @@ unsigned char EEPROM_Read(unsigned char address) {
   return eeprom_read_byte(address);
 }
 
-void displayLEDMatrix() { //updates the matrix?
+void displayLEDMatrix() { //updates the matrix
   updateMatrixSingle(playerX, playerY);
   for (int i = 0; i < 2; i++) {
-    _delay_us(500);
+    _delay_us(300);
     PORTA = ROWS[i];
     PORTB = COLUMNS[i];
   }
@@ -282,14 +283,8 @@ int fall_tick(int state) {
     state = TICK7;
     break;
   case TICK7:
-    ROWS[0] = FALLING_SEQUENCE[7];
-    state = CALCULATE;
-    break;
-  case CALCULATE:
-// moves = MOVES_PER_TICK;
-    // if (COLUMNS[0] == playerCoords[0] || COLUMNS[0] == playerCoords[1]) {
     if (COLUMNS[0] != playerCoords[0] && COLUMNS[0] != playerCoords[1]) {
-      if (score >= 9) {
+      if (score >= 18) {
         state = FALL_START;
         gameState = 0x00;
         // sendWin();
@@ -298,12 +293,18 @@ int fall_tick(int state) {
         // sendInGame();
       } else {
         score++;
+        if (onesPlace == 9) {
+          tensPlace++;
+          onesPlace = 0;
+        } else {
+          onesPlace++;
+        }
         // moves++;
         state = SPAWN;
         // state =
         // task2.elapsedTime+=5;
         sendInGame();
-        speed-=5;
+        speed-= .15;
         TimerSet(speed);
       }
     } else {
@@ -312,7 +313,34 @@ int fall_tick(int state) {
       // sendLose();
       sendGameEnd(0); // send loss endStatus
     }
+        ROWS[0] = FALLING_SEQUENCE[7];
     break;
+  // case CALCULATE:
+  //   if (COLUMNS[0] != playerCoords[0] && COLUMNS[0] != playerCoords[1]) {
+  //     if (score >= 9) {
+  //       state = FALL_START;
+  //       gameState = 0x00;
+  //       // sendWin();
+  //       sendGameEnd(1); // send win endStatus
+  //       //sendMenu();
+  //       // sendInGame();
+  //     } else {
+  //       score++;
+  //       // moves++;
+  //       state = SPAWN;
+  //       // state =
+  //       // task2.elapsedTime+=5;
+  //       sendInGame();
+  //       speed-=5;
+  //       TimerSet(speed);
+  //     }
+  //   } else {
+  //     state = FALL_START;
+  //     gameState = 0x00;
+  //     // sendLose();
+  //     sendGameEnd(0); // send loss endStatus
+  //   }
+  //   break;
   }
   return state;
 }
@@ -372,6 +400,9 @@ void sendGameEnd(unsigned char endStatus) {
   speed = DEFAULT_SPEED;
   checkHighScore();
   score = 0;
+  // score = 0;
+  onesPlace = 0;
+  tensPlace = 0;
   ROWS[0] = 0;
   COLUMNS[0] = 0;
   ROWS[1] = 0;
@@ -391,6 +422,8 @@ void sendGameEnd(unsigned char endStatus) {
 void sendMenu() {
   // checkHighScore();
   score = 0;
+  onesPlace = 0;
+  tensPlace = 0;
   ROWS[0] = 0;
   COLUMNS[0] = 0;
   ROWS[1] = 0;
@@ -407,12 +440,20 @@ void sendMenu() {
   // eeprom_write_word(22, highScore);
   // LCD_WriteData(('0' + highScore));
   highScore = eeprom_read_byte((uint8_t*)22);
+  hsOnes = eeprom_read_byte((uint8_t*)1);
+  hsTens = eeprom_read_byte((uint8_t*)0);
   //reset highscore
   if(highScore > 20){
   highScore = 0;
   }
-eeprom_write_word(22, highScore);
-LCD_WriteData(highScore + '0');
+  			// LCD_WriteData( hiscoretens + '0');
+			// LCD_WriteData( hiscoreones + '0');
+// eeprom_write_word(22, highScore);
+eeprom_write_word(0, hsTens);
+eeprom_write_word(1, hsOnes);
+// LCD_WriteData(highScore + '0');
+LCD_WriteData(hsTens + '0');
+LCD_WriteData(hsOnes + '0');
   LCD_Cursor(31);
   LCD_WriteData(EEPROM_Read(0xFF));
   //load acharacters
@@ -430,10 +471,14 @@ LCD_WriteData(highScore + '0');
 
 void checkHighScore() {
   if (score > highScore) {
+    hsOnes = onesPlace;
+    hsTens = tensPlace;
     eeprom_write_byte((uint8_t*)22, score);
 		highScore = eeprom_read_byte((uint8_t*)22);
     EEPROM_Write(0xFF, myPlayer); // writes new top player
     bestPlayer = myPlayer;
+    eeprom_write_byte((uint8_t*)1,hsOnes);
+		eeprom_write_byte((uint8_t*)0,hsTens);
     // eeprom_write_byte((uint8_t*)46, highscore);
   }
 }
@@ -447,7 +492,8 @@ void sendInGame() {
   LCD_WriteData(myPlayer);
   LCD_Cursor(30);
   LCD_Cursor(1);
-  LCD_WriteData('0' + score);
+  LCD_WriteData('0' + tensPlace);
+  LCD_WriteData('0' + onesPlace);
 }
 
 void EEPROM_RESET() {
@@ -476,12 +522,12 @@ int main(void) {
   **/
   //TASK 1 (INPUT)
   task1.state = 0; //Task initial state.
-  task1.period = 10; //Task Period.
+  task1.period = 60; //Task Period.
   task1.elapsedTime = 0; //Task current elapsed time.
   task1.TickFct = & tick; //Function pointer for the tick.
   //TASK 2 (FALLING)
   task2.state = 0;
-  task2.period = 20;
+  task2.period = 60;
   task2.elapsedTime = 0;
   task2.TickFct = & fall_tick;
 
@@ -516,6 +562,9 @@ int main(void) {
       if (BUTTON3) { // SOFT RESET
         gameState = 0x00;
         score = 0;
+        // score = 0;
+        onesPlace = 0;
+        tensPlace = 0;
         ROWS[0] = 0;
         COLUMNS[0] = 0;
         ROWS[1] = 0;
