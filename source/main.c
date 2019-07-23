@@ -90,6 +90,23 @@ void menu_tick() {
     } else {
       m_state = START;
     }
+    if (BUTTON3) { // SOFT RESET
+      gameState = 0x00;
+      score = 0;
+      // score = 0;
+      onesPlace = 0;
+      tensPlace = 0;
+      ROWS[0] = 0;
+      COLUMNS[0] = 0;
+      ROWS[1] = 0;
+      COLUMNS[1] = 0;
+      playerY = 0;
+      mousePos = 7;
+      sendMenu();
+      // for (i = 0; i < numTasks; i++ ){
+      //   tasks[i]->state = 0;
+      // }
+    }
     break;
   case WAIT1:
     if (!BUTTON2) {
@@ -571,20 +588,13 @@ int main(void) {
         COLUMNS[1] = 0;
         playerY = 0;
         mousePos = 7;
-        // LCD_ClearScreen();
         sendMenu();
         for (i = 0; i < numTasks; i++ ){
           tasks[i]->state = 0;
         }
-        // score = 0;
-        // ROWS[0] = 0;
-        // COLUMNS[0] = 0;
-        // ROWS[1] = 0;
-        // COLUMNS[1] = 0;
       }
       while (!TimerFlag);
       TimerFlag = 0;
-      // moves = 3;
     }
   }
   return 0;
