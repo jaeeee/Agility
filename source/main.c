@@ -48,7 +48,6 @@ GAME DATA (MATRIX)
 ROWS[1] and COLUMNS[1] designated for player
 ROWS[0] and COLUMNS[0] designated for BOT
 playerCoords stores the Y coordinates of the player (two values)
-
 **/
 unsigned char playerCoords[2];
 unsigned char ROWS[2];
