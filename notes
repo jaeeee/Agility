@@ -1,0 +1,59 @@
+FALLING SEQUENCE (0-7)
+
+ROWS[0] = FALLING_SEQUENCE[i]; //loop from 0 to 7
+COLUMNS[0] = ~0x80; //set a COLUMN
+
+// void transmit_data (unsigned char data) {
+//     /* BOT_SR uses A0 - A3  -- controls  GREEN (x), use '~' on data */
+//     // if (SR == BOT_SR) {
+//         // data = ~data;
+//         for (int i = 7; i >= 0; --i) {
+//             // Sets SRCLR to 1 allowing data to be set
+//             // Also clears SRCLK in preparation of sending data
+//             PORTA &= 0xF8; PORTA |= 0x08;
+//             // set SER = next bit of data to be sent.
+//             PORTA |= ((data >> i) & 0x01);
+//             // set SRCLK = 1. Rising edge shifts next bit of data into the shift register
+//             PORTA |= 0x04;
+//         }
+//         // set RCLK = 1. Rising edge copies data from the “Shift” register to the “Storage” register
+//         PORTA |= 0x02;
+//         // clears all lines in preparation of a new transmission
+//         PORTA &= 0xF0;
+//     }
+//
+// //A4-A7
+//     void transmit_data2(unsigned char data) {
+//       data = ~data;
+//       for (int i = 7; i >= 0; --i) {
+//           // Sets SRCLR to 1 allowing data to be set
+//           // Also clears SRCLK in preparation of sending data
+//           PORTA &= 0x8F; PORTA |= 0x80;
+//           // set SER = next bit of data to be sent.
+//           PORTA |= ((data >> i) & 0x01) << 4;
+//           // set SRCLK = 1. Rising edge shifts next bit of data into the shift register
+//           PORTA |= 0x40;
+//       }
+//       // set RCLK = 1. Rising edge copies data from the “Shift” register to the “Storage” register
+//       PORTA |= 0x20;
+//       // clears all lines in preparation of a new transmission
+//       PORTA &= 0x0F;
+//     }
+
+// void transmit_data(unsigned char data) {
+// 	int i;
+// 	for (i = 7; i >= 0 ; --i) {
+// 		// Sets SRCLR to 1 allowing data to be set
+// 		// Also clears SRCLK in preparation of sending data
+// 		PORTA = 0x08;
+// 		// set SER = next bit of data to be sent.
+// 		PORTA |= ((data >> i) & 0x01);
+// 		// set SRCLK = 1. Rising edge shifts next bit of data into the shift register
+// 		PORTA |= 0x04;
+// 	}
+//
+// 	// set RCLK = 1. Rising edge copies data from the “Shift” register to the “Storage” register
+// 	PORTA |= 0x02;
+// 	// clears all lines in preparation of a new transmission
+// 	PORTA = 0x00;
+// }
