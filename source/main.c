@@ -262,7 +262,6 @@ unsigned char convert(int x) {
   }
 }
 
-// enum FALL_STATES { FALL_START, SPAWN, TICK1, TICK2, TICK3, TICK4, TICK5, TICK6, TICK7, CALCULATE };
 int fall_tick(int state) {
   switch (state) {
   case FALL_START:
