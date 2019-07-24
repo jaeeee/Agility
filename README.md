@@ -1,5 +1,5 @@
 # Agility
-> Project proposal: https://docs.google.com/document/d/1T1Mj2qR1PItPo-OTqu2-damr4-Cf8ALiyqDp6ET_3Qk/edit
+> https://docs.google.com/document/d/1FobysX7-ldxoW_8_gbvwzzT51iDeP40s8euVsIR8_9I/edit
 
 # About
 Agility is a game that tests your reflexes and motor skills. I programmed this game onto an Atmega-1284 microcontroller using AVR tools. The game handles bit manipulation and collisions. The game is won when you have received 9 points, but when you are hit by a projectile, you will lose the game.
