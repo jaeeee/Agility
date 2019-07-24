@@ -26,6 +26,7 @@
 #define BUTTON2 (~PIND & 0x02) //left
 #define BUTTON3 (~PIND & 0x04)
 #define DEFAULT_SPEED 20
+#define MAX_LEVEL 18
 // #define MOVES_PER_TICK 3
 
 // #define BUTTON4 (~PINA & 0x08) //down (p2)
@@ -183,8 +184,10 @@ unsigned char EEPROM_Read(unsigned char address) {
 
 void displayLEDMatrix() { //updates the matrix
   updateMatrixSingle(playerX, playerY);
+  PORTA = 0x00;
+  PORTB = 0xFF;
   for (int i = 0; i < 2; i++) {
-    _delay_us(300);
+    _delay_us(500);
     PORTA = ROWS[i];
     PORTB = COLUMNS[i];
   }
@@ -301,7 +304,7 @@ int fall_tick(int state) {
     break;
   case TICK7:
     if (COLUMNS[0] != playerCoords[0] && COLUMNS[0] != playerCoords[1]) {
-      if (score >= 18) {
+      if (score >= MAX_LEVEL) {
         state = FALL_START;
         gameState = 0x00;
         // sendWin();
