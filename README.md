@@ -1,4 +1,4 @@
-# EE/CS120B Final Project - Agility
+# Agility
 > Project proposal: https://docs.google.com/document/d/1T1Mj2qR1PItPo-OTqu2-damr4-Cf8ALiyqDp6ET_3Qk/edit
 
 # About
