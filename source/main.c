@@ -302,6 +302,7 @@ int fall_tick(int state) {
     state = TICK7;
     break;
   case TICK7:
+          ROWS[0] = FALLING_SEQUENCE[7];
     if (COLUMNS[0] != playerCoords[0] && COLUMNS[0] != playerCoords[1]) {
       if (score >= MAX_LEVEL) {
         state = FALL_START;
@@ -332,7 +333,6 @@ int fall_tick(int state) {
       // sendLose();
       sendGameEnd(0); // send loss endStatus
     }
-        ROWS[0] = FALLING_SEQUENCE[7];
     break;
   // case CALCULATE:
   //   if (COLUMNS[0] != playerCoords[0] && COLUMNS[0] != playerCoords[1]) {
